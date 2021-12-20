@@ -1,5 +1,4 @@
 # Web Journal
-#### Video Demo:  <https://youtu.be/iWmSrZWUTGI>
 #### Description:
 This is a web based journaling app. Build by using flask framework. People can use the journal to document about their day.
 You can register and login to the webapp. Once you logged in you can start journaling about your day.
