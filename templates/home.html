@@ -1,0 +1,263 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+
+    <style>
+        #list {
+            font-size: 17px;
+        }
+
+        main {
+            font-size: 17px;
+        }
+
+        .popup {
+            position: absolute;
+            top: -150%;
+            left: 50%;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.25);
+            width: 800px;
+            padding:20px 30px;
+            background: #fff;
+            box-shadow: 2px 2px 5px 5px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            transition: top 0ms ease-in-out 200ms,
+                        opacity 200ms ease-in-out 0ms,
+                        transform 200ms ease-in-out 0ms;
+        }
+
+        .popup.active {
+            top: 50%;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            transition: top 0ms ease-in-out 0ms,
+                        opacity 200ms ease-in-out 0ms,
+                        transform 20ms ease-in-out 0ms;
+        }
+
+        .popup .close-btn {
+            font-size: 13px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            background: #888;
+            color: #eee;
+            text-align: center;
+            line-height: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .login{
+            display:inline-block;
+            padding:0.7em 1.7em;
+            margin:0 0.3em 0.3em 0;
+            border-radius:0.2em;
+            border: none;
+            box-sizing: border-box;
+            text-decoration:none;
+            font-family:'Roboto',sans-serif;
+            font-weight:400;
+            color:#FFFFFF;
+            background-color:#3369ff;
+            box-shadow:inset 0 -0.6em 1em -0.35em rgba(0,0,0,0.17),inset 0 0.6em 2em -0.3em rgba(255,255,255,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+            text-align:center;
+            position:relative;
+        }
+
+        .login:active{
+            box-shadow:inset 0 0.6em 2em -0.3em rgba(0,0,0,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+        }
+
+        .resize-text-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 75vh;
+        }
+
+        .text-box {
+            width: 750px;
+            min-height: 75vh;
+            background: #fff;
+            border-radius: 5px;
+            padding: -10px 25px 30px;
+        }
+
+        .text-box h2 {
+            color: black;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .text-box textarea {
+            width: 100%;
+            resize: none;
+            min-height: 350px;
+            outline: none;
+            padding: 15px;
+            font-size: 17px;
+            margin-top: 20px;
+            border-radius: 6px;
+            max-height: 350px;
+            border: 1px solid #bfbfbf;
+        }
+
+        textarea:is(:focus, :valid) {
+            padding: 14px;
+            border: 2px solid #4671EA;
+        }
+
+        textarea::-webkit-scrollbar{
+            width: 0px;
+        }
+
+        textarea::placeholder{
+            color: #b3b3b3;
+        }
+
+        .popup-textbox .overlay{
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 10vw;
+            height: 10vh;
+            z-index: 1;
+        }
+
+        .popup-textbox .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #fff;
+            width: 700px;
+            height: 500px;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid #bfbfbf;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .popup-textbox .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 30px;
+            height: 30px;
+            background: #222;
+            color: #fff;
+            font-size: 25px;
+            font-weight: 600;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+        }
+
+        .popup-textbox.active .overlay{
+            display: block;
+        }
+
+        .popup-textbox.active .content {
+            transition: all 300ms ease-in-out;
+            transform:translate(-50%, -50%) scale(1);
+        }
+
+        #data {
+            word-wrap: break-word;
+            color: black;
+            margin: 0;
+            padding: 30px;
+            width:100%;
+            position: relative;
+        }
+
+    </style>
+
+    <nav class="bg-light border navbar navbar-expand-md navbar-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/"><span class="red">Web Journal</span></a>
+                <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbar">
+                        <ul id="list" class="navbar-nav ms-auto mt-2">
+                            <li class="nav-item"><a class="nav-link" href="/logout">logout</a></li>
+                        </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container py-5 text-center">
+            <button class="login" style="background-color:#2979FF">ADD +</button>
+            <table class="table tablestriped">
+                <thead>
+                    <tr>
+                        <th class="text-start">No</th>
+                        <th class="text-start">Date</th>
+                        <th class="text-start">Journal</th>
+                    </tr>
+                </thead>
+               <tbody>
+                    {% for row in DATA %}
+                        <tr>
+                            <td class="text-start">{{row.no}}</td>
+                            <td class="text-start">{{row.date}}</td>
+                            <td class="text-start"><button value="{{row.journal}}" onclick="togglePopup(); document.getElementById('data').innerHTML=this.value"  type="button" class="btn btn-primary">View</button></td>
+                                <div class="popup-textbox" id="popup-1">
+                                    <div class="overlay"></div>
+                                    <div class="content">
+                                        <p id="data"></p>
+                                        <div class="close-btn" onclick="togglePopup()">&times;</div>
+                                    </div>
+                                </div>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+
+        <div class="popup">
+            <div class="close-btn">&times;</div>
+            <form action="/home" class="resize-text-box" method="post">
+                <div class="text-box">
+                    <h2>How is your day?</h2>
+                    <textarea name="user-input" spellcheck="false" placeholder="Type something here..." required></textarea>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+
+            document.querySelector(".login").addEventListener("click",function() {
+                document.querySelector(".popup").classList.add("active");
+            });
+
+            document.querySelector(".popup .close-btn").addEventListener("click",function() {
+                document.querySelector(".popup").classList.remove("active");
+            });
+
+            const textarea = document.querySelector("textarea");
+                textarea.addEventListener("keyup", e =>{
+                    textarea.style.height = "auto";
+                    let scHeight = e.target.scrollHeight;
+                    textarea.style.height = `${scHeight}px`;
+            });
+
+            function togglePopup() {
+                document.getElementById("popup-1").classList.toggle("active");
+            }
+        </script>
+
+{% endblock %}
